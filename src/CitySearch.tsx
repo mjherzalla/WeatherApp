@@ -7,21 +7,20 @@ interface CityProp {
     lng: number;
     name: string
 }
-interface CityGeio {
-    latitude: number
-    longitude: number
-}
+
 
 interface Iporps {
-    setSelectedCity: () => ({});
+    setSelectedCity: (s: CityProp) => void
 }
-export const CityInput = () => {
+export const CityInput = (S: Iporps) => {
     const [search, setSearch] = React.useState("")
     const [cityName, setCityName] = React.useState("")
     const [cityList, setCityList] = React.useState<CityProp[]>([])
+
     const [hideSearchinput, setHideearchinput] = React.useState(true)
-    const setSelectedcity = (city: string) => {
-        setCityName(city)
+    const setSelectedcity = (city: CityProp) => {
+        S.setSelectedCity(city)
+        setCityName(city.name)
         setHideearchinput(true)
 
     }
@@ -30,7 +29,7 @@ export const CityInput = () => {
             return
         }
         const citiesList = cities.filter((x, ind, array) => {
-            return (x.name.includes(search))
+            return (x.name.toLowerCase().includes(search.toLowerCase()))
         })
 
         setCityList(citiesList.slice(0, 5))
@@ -40,10 +39,11 @@ export const CityInput = () => {
     return (
         <div style={{ position: "relative" }}>
 
-            {!hideSearchinput ? <input type="input" onChange={(x) => setSearch(x.target.value)} /> : <input type="input" placeholder='t1' value={cityName} onMouseDown={() => setHideearchinput(false)} />}
+            {!hideSearchinput ? <input type="input" onChange={(x) =>
+                setSearch(x.target.value)} /> : <input type="input" placeholder='Search City ....' value={cityName} onMouseDown={() => setHideearchinput(false)} />}
             {cityList && !hideSearchinput && <ul >
                 {cityList.map((x: CityProp) => {
-                    return (<li onClick={() => setSelectedcity(x.name + " ," + x.country)
+                    return (<li onClick={() => setSelectedcity(x)
                     } key={x.name}>{x.name} , {x.country}</li>)
                 })}
             </ul>}
